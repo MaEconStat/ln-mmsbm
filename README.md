@@ -31,12 +31,12 @@ where $\mathbf{U}_P \in \mathbb{R}^{N_P \times r_P}$, $\mathbf{U}_C \in \mathbb{
 
 To prevent highly connected hub nodes from skewing the singular subspaces, factors are updated via alternating projections with row-norm clipping (Jing et al., Eq. 3.1):
 
-$$\mathcal{P}(\mathbf{U}) = \operatorname{SVD}_r\Big(\operatorname{clip}_\delta(\mathbf{U})\Big), \quad \text{where } \operatorname{clip}_\delta(\mathbf{U})_{i,:} = \mathbf{U}_{i,:} \cdot \min\left(1, \, \frac{\delta}{\|\mathbf{U}_{i,:}\|_2}\right)$$
+$$\mathcal{P}(\mathbf{U}) = \mathrm{SVD}_r\Big(\mathrm{clip}_\delta(\mathbf{U})\Big), \quad \text{where } \mathrm{clip}_\delta(\mathbf{U})_{i,:} = \mathbf{U}_{i,:} \cdot \min\left(1, \, \frac{\delta}{\|\mathbf{U}_{i,:}\|_2}\right)$$
 
 The mode-wise factor updates proceed via tensor contractions:
-- $\mathbf{U}_P^{(t+1)} = \operatorname{SVD}_{r_P} \Big( \mathcal{M}_1\big(\mathcal{Y} \times_2 \mathcal{P}(\mathbf{U}_C^{(t)})^\top \times_3 \mathcal{P}(\mathbf{W}^{(t)})^\top \big) \Big)$
-- $\mathbf{U}_C^{(t+1)} = \operatorname{SVD}_{r_C} \Big( \mathcal{M}_2\big(\mathcal{Y} \times_1 \mathcal{P}(\mathbf{U}_P^{(t)})^\top \times_3 \mathcal{P}(\mathbf{W}^{(t)})^\top \big) \Big)$
-- $\mathbf{W}^{(t+1)} = \operatorname{SVD}_{m} \Big( \mathcal{M}_3\big(\mathcal{Y} \times_1 \mathcal{P}(\mathbf{U}_P^{(t)})^\top \times_2 \mathcal{P}(\mathbf{U}_C^{(t)})^\top \big) \Big)$
+- $\mathbf{U}_P^{(t+1)} = \mathrm{SVD}_{r_P} \Big( \mathcal{M}_1\big(\mathcal{Y} \times_2 \mathcal{P}(\mathbf{U}_C^{(t)})^\top \times_3 \mathcal{P}(\mathbf{W}^{(t)})^\top \big) \Big)$
+- $\mathbf{U}_C^{(t+1)} = \mathrm{SVD}_{r_C} \Big( \mathcal{M}_2\big(\mathcal{Y} \times_1 \mathcal{P}(\mathbf{U}_P^{(t)})^\top \times_3 \mathcal{P}(\mathbf{W}^{(t)})^\top \big) \Big)$
+- $\mathbf{W}^{(t+1)} = \mathrm{SVD}_{m} \Big( \mathcal{M}_3\big(\mathcal{Y} \times_1 \mathcal{P}(\mathbf{U}_P^{(t)})^\top \times_2 \mathcal{P}(\mathbf{U}_C^{(t)})^\top \big) \Big)$
 
 Following convergence, $K$-means clustering on $\mathbf{W}$ identifies latent layer types, while spectral clustering on the mode contractions recovers global and layer-specific source/target communities.
 
