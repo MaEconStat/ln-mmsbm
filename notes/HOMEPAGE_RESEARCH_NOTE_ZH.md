@@ -42,4 +42,4 @@ $$\mathcal{Y}_{ijl} \mid c_l=c, \, z^{P,c}_i=a, \, z^{C,c}_j=b \;\sim\; \mathcal
 
 ---
 
-*项目实现代码与复现基准见 GitHub 仓库：[ln-mmsbm-python](https://github.com/MaEconStat/ln-mmsbm-python)*
+*项目实现代码与复现基准见 GitHub 仓库：[ln-mmsbm](https://github.com/MaEconStat/ln-mmsbm)*

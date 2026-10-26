@@ -53,8 +53,8 @@ Environment requirements: Python $\ge$ 3.10 (tested on Python 3.13 via `uv`).
 
 ```bash
 # Clone and install in editable mode with development dependencies
-git clone https://github.com/MaEconStat/ln-mmsbm-python.git
-cd ln-mmsbm-python
+git clone https://github.com/MaEconStat/ln-mmsbm.git
+cd ln-mmsbm
 python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[test]"
