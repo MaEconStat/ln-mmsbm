@@ -10,7 +10,7 @@ This project extends the Mixture Multilayer Stochastic Block Model (MMSBM) and t
 
 Let $\mathcal{X} \in \mathbb{R}_{>0}^{N_P \times N_C \times L}$ be a 3-way continuous flow tensor observed across $N_P$ source nodes (producers), $N_C$ target nodes (consumers), and $L$ layers (e.g., commodity sectors, transaction types, or time periods). 
 
-Taking log-transformed flows $\mathcal{Y}_{ijl} = \log \mathcal{X}_{ijl}$, the conditional generative model is:
+Taking entrywise log-transformed flows $\mathcal{Y} = \log \mathcal{X}$, the conditional generative model is:
 
 $$\mathcal{Y}_{ijl} \mid c_l=c, \, z^{P,c}_i=a, \, z^{C,c}_j=b \;\sim\; \mathcal{N}\big(\mu_{c,a,b} + \alpha_l, \, \sigma^2\big)$$
 
@@ -34,9 +34,14 @@ To prevent highly connected hub nodes from skewing the singular subspaces, facto
 $$\mathcal{P}(\mathbf{U}) = \mathrm{SVD}_r\Big(\mathrm{clip}_\delta(\mathbf{U})\Big), \quad \text{where } \mathrm{clip}_\delta(\mathbf{U})_{i,:} = \mathbf{U}_{i,:} \cdot \min\left(1, \, \frac{\delta}{\|\mathbf{U}_{i,:}\|_2}\right)$$
 
 The mode-wise factor updates proceed via tensor contractions:
-- $\mathbf{U}_P^{(t+1)} = \mathrm{SVD}_{r_P} \Big( \mathcal{M}_1\big(\mathcal{Y} \times_2 \mathcal{P}(\mathbf{U}_C^{(t)})^\top \times_3 \mathcal{P}(\mathbf{W}^{(t)})^\top \big) \Big)$
-- $\mathbf{U}_C^{(t+1)} = \mathrm{SVD}_{r_C} \Big( \mathcal{M}_2\big(\mathcal{Y} \times_1 \mathcal{P}(\mathbf{U}_P^{(t)})^\top \times_3 \mathcal{P}(\mathbf{W}^{(t)})^\top \big) \Big)$
-- $\mathbf{W}^{(t+1)} = \mathrm{SVD}_{m} \Big( \mathcal{M}_3\big(\mathcal{Y} \times_1 \mathcal{P}(\mathbf{U}_P^{(t)})^\top \times_2 \mathcal{P}(\mathbf{U}_C^{(t)})^\top \big) \Big)$
+
+```math
+\begin{aligned}
+\mathbf{U}_P^{(t+1)} &= \mathrm{SVD}_{r_P} \Big( \mathcal{M}_1\big(\mathcal{Y} \times_2 \mathcal{P}(\mathbf{U}_C^{(t)})^\top \times_3 \mathcal{P}(\mathbf{W}^{(t)})^\top \big) \Big) \\
+\mathbf{U}_C^{(t+1)} &= \mathrm{SVD}_{r_C} \Big( \mathcal{M}_2\big(\mathcal{Y} \times_1 \mathcal{P}(\mathbf{U}_P^{(t)})^\top \times_3 \mathcal{P}(\mathbf{W}^{(t)})^\top \big) \Big) \\
+\mathbf{W}^{(t+1)} &= \mathrm{SVD}_{m} \Big( \mathcal{M}_3\big(\mathcal{Y} \times_1 \mathcal{P}(\mathbf{U}_P^{(t)})^\top \times_2 \mathcal{P}(\mathbf{U}_C^{(t)})^\top \big) \Big)
+\end{aligned}
+```
 
 Following convergence, $K$-means clustering on $\mathbf{W}$ identifies latent layer types, while spectral clustering on the mode contractions recovers global and layer-specific source/target communities.
 
@@ -112,7 +117,7 @@ To evaluate recovery fidelity across varying signal-to-noise ratios (SNR), synth
 
 ## Methodological Boundaries & Assumptions
 
-- **Strict Positivity**: The current likelihood assumes strictly positive weights ($\mathcal{X}_{ijl} > 0$). Structural zeros in empirical networks represent a qualitative absence of interaction and should be handled via a two-part / Hurdle process ($D_{ijl} \sim \text{Bernoulli}, \, \mathcal{X}_{ijl} \mid D_{ijl}=1 \sim \text{Lognormal}$) rather than arbitrary offsets like $\log(1+x)$.
+- **Strict Positivity**: The current likelihood assumes strictly positive weights ($\mathcal{X} > 0$). Structural zeros in empirical networks represent a qualitative absence of interaction and should be handled via a two-part / Hurdle process ($D \sim \mathrm{Bernoulli}, \, \mathcal{X} \mid D=1 \sim \mathrm{Lognormal}$) rather than arbitrary offsets like $\log(1+x)$.
 - **Homoskedastic Quadratic Loss**: The unweighted Frobenius tensor decomposition is equivalent to conditional MLE under equal residual variance $\sigma^2$. Complex heteroskedasticity across sectors requires weighted tensor contractions.
 - **Theoretical Guarantees**: Non-asymptotic concentration bounds established for Bernoulli graphs in Jing et al. (2021) do not automatically transfer to continuous Gaussian tensors without separate sub-Gaussian spectral perturbation proofs.
 
